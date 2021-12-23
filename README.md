@@ -10,7 +10,7 @@ How to use :
     -p 8177:8177/udp \
     -p 9100:9100 \
     -v ${YourConfigFolder}:/usr/src/pavlovserver/Pavlov/Saved/ \
-    pavlovshackdocker:latest
+    ghcr.io/gab9281/pavlov-shack-docker:main
 ```
 
 * Start once to populate your configs
