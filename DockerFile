@@ -56,5 +56,4 @@ RUN groupadd -g 999 steam && \
     chown steam:steam -R /usr/src &&\
     chown steam:steam -R /home/steam
 
-ENTRYPOINT [ "/bin/bash" ]
-#ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]
+ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]
