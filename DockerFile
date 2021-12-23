@@ -24,7 +24,7 @@ RUN apt clean autoclean &&\
     rm -rf /var/lib/{apt,dpkg,cache,log}
 
 # Install Pavlov
-RUN /usr/games/steamcmd +force_install_dir /usr/src/pavlovserver +login anonymous  +app_update 622970 -beta shack_beta +exit
+RUN /usr/games/steamcmd +force_install_dir /usr/src/pavlovserver +login anonymous +app_update 622970 -beta shack +exit
 
 # Install Steam SDK
 RUN /usr/games/steamcmd +force_install_dir /usr/src/SteamSDK +login anonymous +app_update 1007 +quit &&\

@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir -p /usr/src/pavlovserver/Pavlov/Saved
 if [ ./* == "./*" ]; then
     mv /usr/src/tmp/* /usr/src/pavlovserver/Pavlov/Saved
 fi
