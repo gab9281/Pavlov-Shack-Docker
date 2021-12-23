@@ -21,7 +21,6 @@ env:
 
 jobs:
   build-and-push-image:
-    runs-on: [self-hosted, linux]
     permissions:
       contents: read
       packages: write
