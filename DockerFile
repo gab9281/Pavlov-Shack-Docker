@@ -1,0 +1,49 @@
+FROM ubuntu:latest
+
+WORKDIR /usr/src
+
+ARG BUILD_DATE
+ARG VERSION
+
+LABEL build_version="version:- ${VERSION} Build-date:- ${BUILD_DATE}"
+LABEL maintainer="gab9281"
+
+# PreInit TZ to bypass configuration
+ENV TZ="Etc/UTC"
+
+# Set volume before use
+RUN mkdir -p /usr/src/pavlovserver/Pavlov/Saved
+VOLUME [ "/usr/src/pavlovserver/Pavlov/Saved" ]
+
+# Download steamcmd and Pavlov dependencies
+RUN dpkg --add-architecture i386 &&\
+    apt update &&\
+    echo steam steam/question select "I AGREE" | debconf-set-selections &&\
+    apt full-upgrade -y &&\
+    apt install -y lib32gcc1 gdb curl lib32gcc1 libc++-dev unzip wget steamcmd
+
+# Install Pavlov
+RUN /usr/games/steamcmd +force_install_dir /usr/src/pavlovserver +login anonymous  +app_update 622970 -beta shack_beta +exit
+
+# Install Steam SDK
+RUN /usr/games/steamcmd +force_install_dir /usr/src/sdk64 +login anonymous +app_update 1007 +quit &&\
+    mkdir -p /home/steam/.steam/sdk64/ &&\
+    cp /usr/src/sdk64/steamclient.so /home/steam/.steam/sdk64/steamclient.so &&\
+    cp /usr/src/sdk64/steamclient.so /usr/src/pavlovserver/Pavlov/Binaries/Linux/steamclient.so
+
+# Adds defaults configurations
+COPY Config /usr/src/pavlovserver/Pavlov/Saved
+
+# Let server to run as normal user
+RUN groupadd -g 999 steam && \
+    useradd -r -u 999 -g steam steam &&\
+    chown steam:steam /usr/src/*
+
+# Adds launch script
+COPY launch.sh /usr/src/pavlovserver/launch.sh
+
+# Starts the server
+
+EXPOSE 7777/udp 7777/tcp 8117/udp 8177/tcp 9100/tcp
+
+ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]

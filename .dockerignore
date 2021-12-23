@@ -1,0 +1,11 @@
+.git
+.vscode
+.gitignore
+.env
+Makefile
+.dockerignore
+.*ignore
+docker-compose*.yml
+Dockerfile*
+*.md
+debug.bat
