@@ -11,39 +11,50 @@ LABEL maintainer="gab9281"
 # PreInit TZ to bypass configuration
 ENV TZ="Etc/UTC"
 
-# Set volume before use
-RUN mkdir -p /usr/src/pavlovserver/Pavlov/Saved
-VOLUME [ "/usr/src/pavlovserver/Pavlov/Saved" ]
-
 # Download steamcmd and Pavlov dependencies
 RUN dpkg --add-architecture i386 &&\
     apt update &&\
     echo steam steam/question select "I AGREE" | debconf-set-selections &&\
     apt full-upgrade -y &&\
-    apt install -y lib32gcc1 gdb curl lib32gcc1 libc++-dev unzip wget steamcmd
+    apt install -y lib32gcc1 gdb curl lib32gcc1 libc++-dev unzip libsdl2-2.0-0:i386 wget steamcmd
+
+# Clear Apt
+RUN apt clean autoclean &&\
+    apt autoremove -y &&\
+    rm -rf /var/lib/{apt,dpkg,cache,log}
 
 # Install Pavlov
 RUN /usr/games/steamcmd +force_install_dir /usr/src/pavlovserver +login anonymous  +app_update 622970 -beta shack_beta +exit
 
 # Install Steam SDK
-RUN /usr/games/steamcmd +force_install_dir /usr/src/sdk64 +login anonymous +app_update 1007 +quit &&\
+RUN /usr/games/steamcmd +force_install_dir /usr/src/SteamSDK +login anonymous +app_update 1007 +quit &&\
     mkdir -p /home/steam/.steam/sdk64/ &&\
-    cp /usr/src/sdk64/steamclient.so /home/steam/.steam/sdk64/steamclient.so &&\
-    cp /usr/src/sdk64/steamclient.so /usr/src/pavlovserver/Pavlov/Binaries/Linux/steamclient.so
+    cp -rf /usr/src/SteamSDK/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so &&\
+    cp -rf /usr/src/SteamSDK/linux64/steamclient.so /usr/src/pavlovserver/Pavlov/Binaries/Linux/steamclient.so
 
 # Adds defaults configurations
-COPY Config /usr/src/pavlovserver/Pavlov/Saved
+RUN mkdir -p /usr/src/pavlovserver/Pavlov/Saved &&\
+    mkdir -p "/home/steam/.config/Epic/Epic Games" &&\
+    touch "/home/steam/.config/Epic/Epic Games/KeyValueStore.ini"
+
+COPY ./Saved /usr/src/tmp
+
+# Adds launch script
+COPY ./launch.sh /usr/src/pavlovserver/launch.sh
+
+# Starts the server
+EXPOSE 7777/udp 
+EXPOSE 7777/tcp 
+EXPOSE 8177/udp 
+EXPOSE 8177/tcp 
+EXPOSE 9100/tcp
+VOLUME /usr/src/pavlovserver/Pavlov/Saved/
 
 # Let server to run as normal user
 RUN groupadd -g 999 steam && \
     useradd -r -u 999 -g steam steam &&\
-    chown steam:steam /usr/src/*
+    chown steam:steam -R /usr/src &&\
+    chown steam:steam -R /home/steam
 
-# Adds launch script
-COPY launch.sh /usr/src/pavlovserver/launch.sh
-
-# Starts the server
-
-EXPOSE 7777/udp 7777/tcp 8117/udp 8177/tcp 9100/tcp
-
-ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]
+ENTRYPOINT [ "/bin/bash" ]
+#ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]
