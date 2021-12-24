@@ -1,27 +1,29 @@
-FROM ubuntu
+FROM ubuntu:latest
 
 WORKDIR /usr/src
 
-ARG BUILD_DATE
-ARG VERSION
-
-LABEL build_version="version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="gab9281"
 
 # PreInit TZ to bypass configuration
 ENV TZ="Etc/UTC"
 
+# Set shell to Bash
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Download steamcmd and Pavlov dependencies
 RUN dpkg --add-architecture i386 &&\
-    apt update &&\
+    apt-get update &&\
     echo steam steam/question select "I AGREE" | debconf-set-selections &&\
-    apt full-upgrade -y &&\
-    apt install -y lib32gcc1 gdb curl lib32gcc1 libc++-dev unzip libsdl2-2.0-0:i386 wget steamcmd
+    apt-get full-upgrade -y &&\
+    apt-get install -y --no-install-recommends lib32gcc1 gdb curl lib32gcc1 libc++-dev unzip libsdl2-2.0-0:i386 wget steamcmd
 
 # Clear Apt
-RUN apt clean autoclean &&\
-    apt autoremove -y &&\
-    rm -rf /var/lib/{apt,dpkg,cache,log}
+RUN apt-get clean autoclean &&\
+    apt-get autoremove -y &&\
+    rm -rf /var/lib/apt &&\
+    rm -rf /var/lib/dpkg &&\
+    rm -rf /var/lib/cache &&\
+    rm -rf /var/lib/log
 
 # Install Pavlov
 RUN /usr/games/steamcmd +force_install_dir /usr/src/pavlovserver +login anonymous +app_update 622970 -beta shack +exit
