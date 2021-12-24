@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM UBUNTU
 
 WORKDIR /usr/src
 
