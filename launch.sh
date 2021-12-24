@@ -1,6 +1,6 @@
 #!/bin/bash
 mkdir -p /usr/src/pavlovserver/Pavlov/Saved
-if [ ./* == "./*" ]; then
+if find -- "/usr/src/pavlovserver/Pavlov/Saved" -prune -type d -empty | grep -q '^'; then
     mv /usr/src/tmp/* /usr/src/pavlovserver/Pavlov/Saved
 fi
 rm -r /usr/src/tmp
