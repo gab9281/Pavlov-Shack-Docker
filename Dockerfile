@@ -58,5 +58,5 @@ RUN groupadd -g 999 steam && \
     chown steam:steam -R /usr/src &&\
     chown steam:steam -R /home/steam
 
-RUN ["chmod", "+x", "/usr/src/pavlovserver/launch.sh"]
+RUN chmod 755 /usr/src/pavlovserver/launch.sh
 ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]
