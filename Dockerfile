@@ -15,7 +15,7 @@ RUN dpkg --add-architecture i386 &&\
     apt-get update &&\
     echo steam steam/question select "I AGREE" | debconf-set-selections &&\
     apt-get full-upgrade -y &&\
-    apt-get install -y --no-install-recommends lib32gcc1 gdb curl lib32gcc1 libc++-dev unzip libsdl2-2.0-0:i386 wget steamcmd
+    apt-get install -y lib32gcc1 gdb curl lib32gcc1 libc++-dev unzip libsdl2-2.0-0:i386 wget steamcmd
 
 # Clear Apt
 RUN apt-get clean autoclean &&\
