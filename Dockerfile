@@ -56,9 +56,5 @@ RUN groupadd -g 999 steam && \
     chown steam:steam -R /usr/src &&\
     chown steam:steam -R /home/steam
 
-<<<<<<< HEAD:DockerFile
 RUN ["chmod", "+x", "/usr/src/pavlovserver/launch.sh"]
 ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]
-=======
-ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]
->>>>>>> d7bc268de17db41d9ccc85c3a9fc3f33f37d9f71:Dockerfile
