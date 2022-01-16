@@ -25,14 +25,8 @@ RUN apt-get clean autoclean &&\
     rm -rf /var/lib/cache &&\
     rm -rf /var/lib/log
 
-# Install Pavlov
-RUN /usr/games/steamcmd +force_install_dir /usr/src/pavlovserver +login anonymous +app_update 622970 -beta shack +exit
-
 # Install Steam SDK
-RUN /usr/games/steamcmd +force_install_dir /usr/src/SteamSDK +login anonymous +app_update 1007 +quit &&\
-    mkdir -p /home/steam/.steam/sdk64/ &&\
-    cp -rf /usr/src/SteamSDK/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so &&\
-    cp -rf /usr/src/SteamSDK/linux64/steamclient.so /usr/src/pavlovserver/Pavlov/Binaries/Linux/steamclient.so
+RUN /usr/games/steamcmd +force_install_dir /usr/src/SteamSDK +login anonymous +app_update 1007 +quit
 
 # Adds defaults configurations
 RUN mkdir -p /usr/src/pavlovserver/Pavlov/Saved &&\
@@ -56,7 +50,10 @@ VOLUME /usr/src/pavlovserver/Pavlov/Saved/
 RUN groupadd -g 999 steam && \
     useradd -r -u 999 -g steam steam &&\
     chown steam:steam -R /usr/src &&\
-    chown steam:steam -R /home/steam
+    chown steam:steam -R /home/steam && \
+    chmod 755 /usr/src/pavlovserver/launch.sh
 
-RUN chmod 755 /usr/src/pavlovserver/launch.sh
+
+USER steam
+
 ENTRYPOINT ["/usr/src/pavlovserver/launch.sh", "", "FOREGROUND"]
