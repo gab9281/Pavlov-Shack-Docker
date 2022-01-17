@@ -26,5 +26,4 @@ ghcr.io/gab9281/pavlov-shack-docker:main
 
 This docker image is created to be started/restarted.
 It will automatically check for new version of pavlov on startup.
-A automatic map download script is in the maps folder.
 All steps were taken from the [wiki](http://wiki.pavlov-vr.com/index.php?title=Dedicated_server#Hosting_at_home).
